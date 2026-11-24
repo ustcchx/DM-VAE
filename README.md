@@ -6,7 +6,7 @@
 The Hong Kong University of Science and Technology<br>
 <sub>* Equal contribution · † Corresponding author</sub>
 
-[Project page](https://ustcchx.github.io/DM-VAE-page/) · [Checkpoints](#checkpoints) · [Quick start](#quick-start) · [Training](#training) · [Citation](#citation)
+[Project page](https://ustcchx.github.io/DM-VAE-page/) · [Checkpoints](https://huggingface.co/Davidwang215/dmvae) · [Quick start](#quick-start) · [Training](#training) · [Citation](#citation)
 
 </div>
 
@@ -24,7 +24,7 @@ source .venv/bin/activate
 python -m pip install -e ".[hub]"
 ```
 
-Request access to `Daxuxu36/DFlow_checkpoint` and `Davidwang215/DFlow` on Hugging Face, then run `hf auth login`. Checkpoints are automatically downloaded, verified, and saved to `weights/`.
+Public inference weights are hosted at [Davidwang215/dmvae](https://huggingface.co/Davidwang215/dmvae) (see [Checkpoints](#checkpoints)). The `dmvae.download` commands below fetch the original `.pt` archive instead: request access to `Daxuxu36/DFlow_checkpoint` and `Davidwang215/DFlow` on Hugging Face, then run `hf auth login`. Those checkpoints are automatically downloaded, verified, and saved to `weights/`.
 
 ### Reconstruct an image
 
@@ -73,13 +73,24 @@ python -m pip install -e ".[train]"
 
 DM-VAE downsamples each spatial dimension by 16 (256 × 256 → 16 × 16). Model names indicate the **full** latent width, and each generator pairs with its matching tokenizer, channel statistics, and TRA head.
 
-| DiT-XL | Full / skeleton channels | Download DiT and matching VAE |
-| --- | ---: | --- |
-| f16d32 · 64 epochs | 32 / 16 | `python -m dmvae.download dit-d32-64 f16d32` |
-| f16d32 · 400 epochs | 32 / 16 | `python -m dmvae.download dit-d32-400 f16d32` |
-| f16d64 · 400 epochs | 64 / 32 | `python -m dmvae.download dit-d64-400 f16d64` |
+All weights are public on Hugging Face: **[Davidwang215/dmvae](https://huggingface.co/Davidwang215/dmvae)** (safetensors, no access request needed).
 
-Both f16d32 generators share the same tokenizer. To download all three generators and both tokenizers:
+| DiT-XL | Full / skeleton channels | DM-VAE | LightningDiT-XL | `dmvae.download` names |
+| --- | ---: | --- | --- | --- |
+| f16d32 · 64 epochs | 32 / 16 | [dmvae-f16d32-50ep](https://huggingface.co/Davidwang215/dmvae/blob/main/vae/dmvae-f16d32-50ep.safetensors) | [lightningdit-f16d32-64ep](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d32-64ep.safetensors) | `dit-d32-64 f16d32` |
+| f16d32 · 400 epochs | 32 / 16 | [dmvae-f16d32-50ep](https://huggingface.co/Davidwang215/dmvae/blob/main/vae/dmvae-f16d32-50ep.safetensors) | [lightningdit-f16d32-400ep](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d32-400ep.safetensors) | `dit-d32-400 f16d32` |
+| f16d64 · 400 epochs | 64 / 32 | [dmvae-f16d64-50ep](https://huggingface.co/Davidwang215/dmvae/blob/main/vae/dmvae-f16d64-50ep.safetensors) | [lightningdit-f16d64-400ep](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d64-400ep.safetensors) | `dit-d64-400 f16d64` |
+
+Download the whole repository and sample with its loader (needs `pip install safetensors`):
+
+```bash
+hf download Davidwang215/dmvae --local-dir weights/dmvae
+python weights/dmvae/inference.py --variant d32 --classes 207 --device cuda --precision bf16 --output samples/d32
+```
+
+Use `--variant d64` for f16d64 and `--dit-epochs 64` for the 64-epoch f16d32 generator.
+
+Both f16d32 generators share the same tokenizer. To fetch the original `.pt` archive (gated, see [Quick start](#quick-start)) for all three generators and both tokenizers:
 
 ```bash
 python -m dmvae.download dit-d32-64 dit-d32-400 dit-d64-400 f16d32 f16d64
