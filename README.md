@@ -6,13 +6,23 @@
 The Hong Kong University of Science and Technology<br>
 <sub>* Equal contribution · † Corresponding author</sub>
 
-[Project page](https://ustcchx.github.io/DM-VAE-page/) · [Checkpoints](https://huggingface.co/Davidwang215/dmvae) · [Quick start](#quick-start) · [Training](#training) · [Citation](#citation)
+[![arXiv](https://img.shields.io/badge/arXiv-2611.23964-b31b1b.svg)](https://arxiv.org/abs/2611.23964)
+[![Project page](https://img.shields.io/badge/Project-page-5b3cc4.svg)](https://ustcchx.github.io/DM-VAE-page/)
+[![Checkpoints](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-checkpoints-ffb000.svg)](https://huggingface.co/Davidwang215/dmvae)
+
+[Quick start](#quick-start) · [Checkpoints](#checkpoints) · [Training](#training) · [Method](#method) · [Results](#results) · [Citation](#citation)
 
 </div>
 
 ![Class-conditional ImageNet generations using DM-VAE f16d32 after 64 generator training epochs](assets/imagenet-64ep.jpg)
 
-*ImageNet-256 samples from the f16d32 model at 64 epochs, using internal skeleton guidance without classifier-free guidance. Gallery from the paper.*
+<p align="center"><sub>ImageNet-256 samples from the f16d32 model after 64 generator epochs, using internal skeleton guidance without classifier-free guidance.</sub></p>
+
+DM-VAE is a foundation-model-free image tokenizer. A smooth low-dimensional **skeleton** regularizes the high-dimensional latent from within, so reconstruction keeps improving with latent width while the latent stays easy to generate.
+
+- **Reconstruction:** 0.12 rFID / 30.76 dB PSNR on ImageNet-256 (f16d64).
+- **Generation:** 1.25 FID-50K without CFG and 1.17 with CFG on ImageNet-256 (f16d32, LightningDiT-XL, 400 epochs).
+- **Released:** tokenizers, generators, sampling, evaluation, and training code.
 
 ## Quick start
 
@@ -58,6 +68,25 @@ Generates samples for ImageNet classes 207 and 360. The `400ep-ig-cfg` recipe co
 
 See [sampling recipes and normalization](generation/README.md) and [FID-50K / reconstruction evaluation](evaluation/README.md) for details.
 
+## Checkpoints
+
+DM-VAE downsamples each spatial dimension by 16 (256 × 256 → 16 × 16). Model names indicate the **full** latent width, and each generator pairs with its matching tokenizer, channel statistics, and TRA head.
+
+All weights are public on Hugging Face at **[Davidwang215/dmvae](https://huggingface.co/Davidwang215/dmvae)** (safetensors, no access request needed).
+
+| Model | Full / skeleton channels | Tokenizer | Generator (LightningDiT-XL) | `dmvae.download` names |
+| --- | :---: | --- | --- | --- |
+| f16d32 | 32 / 16 | [50 epochs](https://huggingface.co/Davidwang215/dmvae/blob/main/vae/dmvae-f16d32-50ep.safetensors) | [64 epochs](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d32-64ep.safetensors) · [400 epochs](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d32-400ep.safetensors) | `f16d32` · `dit-d32-64` · `dit-d32-400` |
+| f16d64 | 64 / 32 | [50 epochs](https://huggingface.co/Davidwang215/dmvae/blob/main/vae/dmvae-f16d64-50ep.safetensors) | [400 epochs](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d64-400ep.safetensors) | `f16d64` · `dit-d64-400` |
+
+Both f16d32 generators share the same tokenizer. To download all three generators and both tokenizers:
+
+```bash
+python -m dmvae.download dit-d32-64 dit-d32-400 dit-d64-400 f16d32 f16d64
+```
+
+Local filenames, the pinned revision, and SHA-256 digests are listed in the [checkpoint catalog](dmvae/weights.json).
+
 ## Training
 
 Training and feature extraction require Linux, macOS, or WSL2 (due to POSIX file locks). Published ImageNet runs used Linux with CUDA.
@@ -69,26 +98,6 @@ python -m pip install -e ".[train]"
 - [Train DM-VAEs](training/vae/README.md) from an ImageFolder training split.
 - [Train the generator](training/dit/README.md) based on f16d32 or f16d64 DM-VAEs.
 
-## Checkpoints
-
-DM-VAE downsamples each spatial dimension by 16 (256 × 256 → 16 × 16). Model names indicate the **full** latent width, and each generator pairs with its matching tokenizer, channel statistics, and TRA head.
-
-All weights are public on Hugging Face: **[Davidwang215/dmvae](https://huggingface.co/Davidwang215/dmvae)** (safetensors, no access request needed).
-
-| DiT-XL | Full / skeleton channels | DM-VAE | LightningDiT-XL | `dmvae.download` names |
-| --- | ---: | --- | --- | --- |
-| f16d32 · 64 epochs | 32 / 16 | [dmvae-f16d32-50ep](https://huggingface.co/Davidwang215/dmvae/blob/main/vae/dmvae-f16d32-50ep.safetensors) | [lightningdit-f16d32-64ep](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d32-64ep.safetensors) | `dit-d32-64 f16d32` |
-| f16d32 · 400 epochs | 32 / 16 | [dmvae-f16d32-50ep](https://huggingface.co/Davidwang215/dmvae/blob/main/vae/dmvae-f16d32-50ep.safetensors) | [lightningdit-f16d32-400ep](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d32-400ep.safetensors) | `dit-d32-400 f16d32` |
-| f16d64 · 400 epochs | 64 / 32 | [dmvae-f16d64-50ep](https://huggingface.co/Davidwang215/dmvae/blob/main/vae/dmvae-f16d64-50ep.safetensors) | [lightningdit-f16d64-400ep](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d64-400ep.safetensors) | `dit-d64-400 f16d64` |
-
-Both f16d32 generators share the same tokenizer. To download all three generators and both tokenizers:
-
-```bash
-python -m dmvae.download dit-d32-64 dit-d32-400 dit-d64-400 f16d32 f16d64
-```
-
-Local filenames, the pinned revision, and SHA-256 digests are listed in the [checkpoint catalog](dmvae/weights.json).
-
 ## Method
 
 ![Dual-manifold VAE framework, showing the full latent, down-projection, lifted skeleton and two decoders](assets/dual-manifold.png)
@@ -97,7 +106,7 @@ Local filenames, the pinned revision, and SHA-256 digests are listed in the [che
 2. **Topological representation alignment (TRA)** — [training/dit/objective.py](training/dit/objective.py)
 3. **Internal guidance with topological skeleton (IG<sub>TS</sub>)** — [generation/sampling.py](generation/sampling.py)
 
-## Reported results
+## Results
 
 **Reconstruction.** Evaluated on the ImageNet-1K validation set and zero-shot on Anime-Faces-256 (lower rFID and higher PSNR are better).
 
@@ -110,10 +119,12 @@ Local filenames, the pinned revision, and SHA-256 digests are listed in the [che
 
 | DiT-XL tokenizer | Epochs | IG<sub>TS</sub> ↓ | IG<sub>TS</sub> + CFG ↓ |
 | --- | ---: | ---: | ---: |
-| DM-VAE + DINOv2, f16d32 | 400 | 1.29 | 1.11 |
 | DM-VAE f16d32 | 64 | 2.62 | 1.67 |
-| DM-VAE f16d32 | 400 | **1.25** | **1.17** |
+| DM-VAE f16d32 | 400 | **1.25** | 1.17 |
 | DM-VAE f16d64 | 400 | 1.28 | 1.20 |
+| DM-VAE + DINOv2, f16d32 | 400 | 1.29 | **1.11** |
+
+The first three rows use no external foundation model. The last row adds DINOv2 alignment during tokenizer training.
 
 ## Citation
 
@@ -121,9 +132,11 @@ Local filenames, the pinned revision, and SHA-256 digests are listed in the [che
 @article{chen2026dmvae,
   title   = {Dual-Manifold Variational Autoencoders},
   author  = {Chen, Hongxu and Wang, Chun and Wang, Yanghao and Li, Hongxiang and Wang, Zhen and Zhang, Zhixiang and Chen, Long},
-  journal = {arXiv preprint},
+  journal = {arXiv preprint arXiv:2611.23964},
   year    = {2026}
 }
 ```
+
+## Acknowledgments
 
 Built on the convolutional autoencoder designs of [CompVis](https://github.com/CompVis/latent-diffusion) and the [LightningDiT / VA-VAE](https://github.com/hustvl/LightningDiT) generator. See [third-party acknowledgments](third_party/README.md) for code and image credits.
