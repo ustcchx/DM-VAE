@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+message: "Please cite the DM-VAE paper when using this software."
+type: software
+title: "DM-VAE: Dual-Manifold Variational Autoencoders"
+url: "https://ustcchx.github.io/DM-VAE-page/"
+authors:
+  - family-names: Chen
+    given-names: Hongxu
+  - family-names: Wang
+    given-names: Chun
+  - family-names: Wang
+    given-names: Yanghao
+  - family-names: Li
+    given-names: Hongxiang
+  - family-names: Wang
+    given-names: Zhen
+  - family-names: Zhang
+    given-names: Zhixiang
+  - family-names: Chen
+    given-names: Long
+preferred-citation:
+  type: article
+  title: "Dual-Manifold Variational Autoencoders"
+  journal: "arXiv preprint"
+  year: 2026
+  url: "https://ustcchx.github.io/DM-VAE-page/"
+  authors:
+    - family-names: Chen
+      given-names: Hongxu
+    - family-names: Wang
+      given-names: Chun
+    - family-names: Wang
+      given-names: Yanghao
+    - family-names: Li
+      given-names: Hongxiang
+    - family-names: Wang
+      given-names: Zhen
+    - family-names: Zhang
+      given-names: Zhixiang
+    - family-names: Chen
+      given-names: Long
