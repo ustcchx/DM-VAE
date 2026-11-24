@@ -1,5 +1,5 @@
 """Dual-Manifold Variational Autoencoders."""
 from .autoencoder import DMVAE
-from .checkpoints import load_vae
+from .checkpoints import load_state, load_vae
 
 __all__ = ["DMVAE", "load_vae"]

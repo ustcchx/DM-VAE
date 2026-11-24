@@ -81,7 +81,8 @@ def extract(args):
     stats = None
     if args.stats:
         stats = json.loads(args.stats.read_text())
-        if stats["vae_sha256"] != vae_sha:
+        expected = stats["vae_sha256"]
+        if vae_sha not in ([expected] if isinstance(expected, str) else expected):
             raise ValueError("Provided channel statistics belong to a different VAE checkpoint.")
     contract = dict(
         vae_sha256=vae_sha, dataset=image_index_digest(data), shard_size=args.shard_size,

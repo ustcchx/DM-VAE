@@ -6,9 +6,17 @@ import torch
 from .autoencoder import DMVAE
 
 
+def load_state(path, mmap=False):
+    """Read a state dictionary from a safetensors file or a PyTorch checkpoint."""
+    if str(path).endswith(".safetensors"):
+        from safetensors.torch import load_file
+        return load_file(str(path), device="cpu")
+    return torch.load(path, map_location="cpu", weights_only=True, mmap=mmap)
+
+
 def load_vae(path, device="cpu"):
     """Infer architecture from a local checkpoint and return the tokenizer in eval mode."""
-    state = torch.load(path, map_location="cpu", weights_only=True)
+    state = load_state(path)
     if not isinstance(state, Mapping):
         raise ValueError("Expected a state dictionary or a training checkpoint.")
     for wrapper in ("ema_model", "ema", "model", "state_dict"):

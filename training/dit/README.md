@@ -8,7 +8,7 @@ Trains a DiT velocity model in the frozen DM-VAE latent space with a TRA head (b
 python -m dmvae.download f16d32
 python -m training.dit.extract \
   --images /path/to/imagenet/train \
-  --vae weights/dmvae-f16d32.pt \
+  --vae weights/dmvae-f16d32.safetensors \
   --stats generation/configs/f16d32.json \
   --output features/f16d32
 ```
@@ -34,7 +34,7 @@ torchrun --standalone --nproc-per-node=8 -m training.dit.train \
 
 # Sample from EMA checkpoint
 python -m generation.sample \
-  --vae weights/dmvae-f16d32.pt \
+  --vae weights/dmvae-f16d32.safetensors \
   --dit runs/dit-f16d32-400ep/ema.pt \
   --stats features/f16d32/stats.json \
   --recipe 400ep-ig --classes 88 207 --output samples
@@ -49,16 +49,16 @@ python -m generation.sample \
 ```bash
 python -m dmvae.download f16d64
 python -m training.dit.extract \
-  --images /path/to/imagenet/train --vae weights/dmvae-f16d64.pt \
+  --images /path/to/imagenet/train --vae weights/dmvae-f16d64.safetensors \
   --stats generation/configs/f16d64.json --output features/f16d64
 
 torchrun --standalone --nproc-per-node=8 -m training.dit.train \
-  --cache features/f16d64/manifest.json --vae weights/dmvae-f16d64.pt \
+  --cache features/f16d64/manifest.json --vae weights/dmvae-f16d64.safetensors \
   --output runs/dit-f16d64-400ep --epochs 400 \
   --batch-size 64 --accum-steps 2 --ema-decay 0.9997
 
 python -m generation.sample \
-  --vae weights/dmvae-f16d64.pt --dit runs/dit-f16d64-400ep/ema.pt \
+  --vae weights/dmvae-f16d64.safetensors --dit runs/dit-f16d64-400ep/ema.pt \
   --stats features/f16d64/stats.json --recipe d64-400ep-ig --classes 88 207
 ```
 

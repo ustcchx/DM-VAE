@@ -15,7 +15,7 @@ from .sampling import euler_sample, RECIPES
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dit", required=True, type=Path, help="LightningDiT-XL EMA state dict")
+    parser.add_argument("--dit", required=True, type=Path, help="LightningDiT-XL EMA weights (.safetensors or .pt)")
     parser.add_argument("--vae", required=True, type=Path, help="Corresponding DM-VAE EMA")
     parser.add_argument("--recipe", choices=RECIPES, default="400ep-ig")
     parser.add_argument("--stats", type=Path, help="Channel statistics (defaults to the tokenizer paired with the recipe)")
@@ -41,7 +41,7 @@ def verify_vae(path, expected):
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
-    if digest.hexdigest() != expected:
+    if digest.hexdigest() not in ([expected] if isinstance(expected, str) else expected):
         raise ValueError("The VAE checkpoint does not match the tokenizer that produced these channel statistics.")
 
 
@@ -62,7 +62,7 @@ def load_stats(path, device, dtype):
 @torch.no_grad()
 def main():
     args = parse_args()
-    from dmvae import load_vae
+    from dmvae import load_state, load_vae
 
     device = torch.device(args.device)
     precision = args.precision or ("bf16" if device.type == "cuda" else "fp32")
@@ -88,14 +88,14 @@ def main():
         expected_shape = {"f16d32.json": (32, 16), "f16d32-dino.json": (32, 12), "f16d64.json": (64, 32)}[preset]
         if (channels, vae.z_channels_low) != expected_shape:
             raise ValueError(f"The {args.recipe} recipe requires a tokenizer with high/low dimensions {expected_shape}.")
-    # A meta-device model and mmap avoid transient copies of the 2.7 GB XL weights.
+    # A meta-device model and memory-mapped weights avoid transient copies of the 2.7 GB XL weights.
     with torch.device("meta"):
         if channels == 64:
             from .model_d64 import LatentDiT64
             model = LatentDiT64()
         else:
             model = LatentDiT(z_channels_low=vae.z_channels_low)
-    state = torch.load(args.dit, map_location="cpu", weights_only=True, mmap=True)
+    state = load_state(args.dit, mmap=True)
     model.load_state_dict(state, strict=True, assign=True)
     model = model.float().to(device).eval()
     del state

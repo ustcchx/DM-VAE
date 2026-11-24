@@ -8,7 +8,7 @@ Run these commands from the repository root after downloading the matching check
 
 ```bash
 python -m generation.sample \
-  --dit weights/dit-f16d32-400ep.pt --vae weights/dmvae-f16d32.pt \
+  --dit weights/dit-f16d32-400ep.safetensors --vae weights/dmvae-f16d32.safetensors \
   --recipe 400ep-ig-cfg --device cuda --precision bf16 \
   --count 50000 --batch-size 8 --output outputs/fid400/png
 
@@ -31,7 +31,7 @@ The tokenizer table compares reconstructions with their source images. The paper
 The following command computes mean per-image PSNR and saves matching uint8 PNG pairs. It takes the deterministic posterior mean and scores the full decoder. Images that are already 256 × 256 keep their geometry. For other shapes the exporter uses the same bicubic center crop as the quick start. Supply the exact validation crops used by your comparison when reporting scores.
 
 ```bash
-python -m evaluation.reconstruct --vae weights/dmvae-f16d32.pt \
+python -m evaluation.reconstruct --vae weights/dmvae-f16d32.safetensors \
   --images /path/to/validation --output outputs/recon-val
 
 python -m pip install pytorch-fid

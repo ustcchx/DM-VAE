@@ -4,7 +4,7 @@ The f16d32 and f16d64 generators pair 32- and 64-channel DM-VAE image latents wi
 
 ## Weights
 
-Request access to the tokenizer and generator repositories on Hugging Face. Once your account has access to both, sign in with `hf auth login`. From the repository root, download the f16d32 tokenizer and the 400-epoch generator.
+Weights are public at [Davidwang215/dmvae](https://huggingface.co/Davidwang215/dmvae). From the repository root, download the f16d32 tokenizer and the 400-epoch generator.
 
 ```bash
 python -m dmvae.download f16d32 dit-d32-400
@@ -14,15 +14,15 @@ Use `dit-d32-64` to download the 64-epoch generator. Checkpoint selection and fi
 
 | Model | Selection | SHA-256 |
 | --- | --- | --- |
-| `f16d32` | EMA | `1866635639185c2adc4bc1196927106074f8087cfe5ee5832becd9ab2d6c892c` |
-| `dit-d32-64` | EMA 0.9995 | `19f575d5037a3cf6d23d537fd2caed18ed5898f165569678cb4cf93b7dcfc765` |
-| `dit-d32-400` | EMA 0.9999 | `8ea76ae3b8f58c66a72f8c13df2031059804d9c0c41b1bfc9bcc6058501843cd` |
+| `f16d32` | EMA | `03f037b19412efb8406034a45a72fd9e7a70dcbb4f0de19c0a9fab67cc64a722` |
+| `dit-d32-64` | EMA 0.9995 | `7c9c925c4d7980524092ec4593a4a7ecde7fab5e3422801651fa5b616dac28d3` |
+| `dit-d32-400` | EMA 0.9999 | `fd109b8e44feb12e4b5132e935f86922d232e661ba27d51355f13d9a89e1116c` |
 
 ## Generate images
 
 ```bash
 python -m generation.sample \
-  --dit weights/dit-f16d32-400ep.pt --vae weights/dmvae-f16d32.pt \
+  --dit weights/dit-f16d32-400ep.safetensors --vae weights/dmvae-f16d32.safetensors \
   --recipe 400ep-ig-cfg --classes 207 360 --count 2 --output samples
 ```
 
@@ -46,7 +46,7 @@ The f16d64 generator uses the f16d64 tokenizer, its own latent statistics, and a
 ```bash
 python -m dmvae.download f16d64 dit-d64-400
 python -m generation.sample \
-  --dit weights/dit-f16d64-400ep.pt --vae weights/dmvae-f16d64.pt \
+  --dit weights/dit-f16d64-400ep.safetensors --vae weights/dmvae-f16d64.safetensors \
   --recipe d64-400ep-ig-cfg --classes 207 --count 1 --output samples-d64
 ```
 

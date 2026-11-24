@@ -1,32 +1,37 @@
 {
   "f16d32": {
-    "local_name": "dmvae-f16d32.pt",
-    "repo": "Daxuxu36/DFlow_checkpoint",
-    "revision": "a7eb159c7cbd3e8f0edfc9964d7284d29c6c6281",
-    "sha256": "1866635639185c2adc4bc1196927106074f8087cfe5ee5832becd9ab2d6c892c"
+    "local_name": "dmvae-f16d32.safetensors",
+    "repo": "Davidwang215/dmvae",
+    "revision": "3098ff98b323e69851fb30e9a3a345c922a5bf79",
+    "filename": "vae/dmvae-f16d32-50ep.safetensors",
+    "sha256": "03f037b19412efb8406034a45a72fd9e7a70dcbb4f0de19c0a9fab67cc64a722"
   },
   "f16d64": {
-    "local_name": "dmvae-f16d64.pt",
-    "repo": "Daxuxu36/DFlow_checkpoint",
-    "revision": "a7eb159c7cbd3e8f0edfc9964d7284d29c6c6281",
-    "sha256": "9bf798c537bc6a29f9641dfeb2f445cb455f91398b7bc1a2f05212c3203dffe2"
+    "local_name": "dmvae-f16d64.safetensors",
+    "repo": "Davidwang215/dmvae",
+    "revision": "3098ff98b323e69851fb30e9a3a345c922a5bf79",
+    "filename": "vae/dmvae-f16d64-50ep.safetensors",
+    "sha256": "f66e53a0409abfaa8150d1eccae204d193a33c897d89c8995d7f63b50aee2a03"
   },
   "dit-d32-64": {
-    "local_name": "dit-f16d32-64ep.pt",
-    "repo": "Davidwang215/DFlow",
-    "revision": "f1c22936cd95e8a1fc7cfcedbbd83c61376014ee",
-    "sha256": "19f575d5037a3cf6d23d537fd2caed18ed5898f165569678cb4cf93b7dcfc765"
+    "local_name": "dit-f16d32-64ep.safetensors",
+    "repo": "Davidwang215/dmvae",
+    "revision": "3098ff98b323e69851fb30e9a3a345c922a5bf79",
+    "filename": "lightningdit/lightningdit-f16d32-64ep.safetensors",
+    "sha256": "7c9c925c4d7980524092ec4593a4a7ecde7fab5e3422801651fa5b616dac28d3"
   },
   "dit-d32-400": {
-    "local_name": "dit-f16d32-400ep.pt",
-    "repo": "Davidwang215/DFlow",
-    "revision": "f1c22936cd95e8a1fc7cfcedbbd83c61376014ee",
-    "sha256": "8ea76ae3b8f58c66a72f8c13df2031059804d9c0c41b1bfc9bcc6058501843cd"
+    "local_name": "dit-f16d32-400ep.safetensors",
+    "repo": "Davidwang215/dmvae",
+    "revision": "3098ff98b323e69851fb30e9a3a345c922a5bf79",
+    "filename": "lightningdit/lightningdit-f16d32-400ep.safetensors",
+    "sha256": "fd109b8e44feb12e4b5132e935f86922d232e661ba27d51355f13d9a89e1116c"
   },
   "dit-d64-400": {
-    "local_name": "dit-f16d64-400ep.pt",
-    "repo": "Daxuxu36/DFlow_checkpoint",
-    "revision": "a7eb159c7cbd3e8f0edfc9964d7284d29c6c6281",
-    "sha256": "9dbac64e722f27e07fd87cf7097d3f53cc661e43660fea4ee6eb95d3fbc9cc4a"
+    "local_name": "dit-f16d64-400ep.safetensors",
+    "repo": "Davidwang215/dmvae",
+    "revision": "3098ff98b323e69851fb30e9a3a345c922a5bf79",
+    "filename": "lightningdit/lightningdit-f16d64-400ep.safetensors",
+    "sha256": "cd40ead370ea6ce3f705a5daac80b6ccac3b1cec17914b1d0cb54fab7f94ad56"
   }
 }

@@ -1,7 +1,6 @@
-"""Download a matched DM-VAE checkpoint from the versioned model archive."""
+"""Download matched DM-VAE checkpoints from the public Hugging Face repository."""
 
 import argparse
-from functools import lru_cache
 import hashlib
 import json
 import os
@@ -20,19 +19,6 @@ def sha256(path):
     return digest.hexdigest()
 
 
-@lru_cache(maxsize=None)
-def archive_paths(repo, revision):
-    """Look up the files in a pinned model revision by their LFS content digest."""
-    from huggingface_hub import HfApi
-
-    siblings = HfApi().model_info(repo, revision=revision, files_metadata=True).siblings
-    paths = {}
-    for file in sorted(siblings, key=lambda item: (item.rfilename.count("/"), item.rfilename)):
-        if file.lfs:
-            paths.setdefault(file.lfs.sha256, file.rfilename)
-    return paths
-
-
 def download(name, directory):
     entry = CATALOG[name]
     target = directory / entry["local_name"]
@@ -42,19 +28,11 @@ def download(name, directory):
         raise ValueError(f"Checksum mismatch for existing file {target}. Move it before retrying.")
 
     try:
-        from huggingface_hub import constants, hf_hub_download
-        from huggingface_hub.file_download import repo_folder_name
+        from huggingface_hub import hf_hub_download
     except ImportError as error:
         raise SystemExit('Install the downloader with: python -m pip install -e ".[hub]"') from error
 
-    repo, revision, digest = entry["repo"], entry["revision"], entry["sha256"]
-    cache = Path(constants.HF_HUB_CACHE) / repo_folder_name(repo_id=repo, repo_type="model")
-    source = cache / "blobs" / digest
-    if not source.is_file():
-        filename = archive_paths(repo, revision).get(digest)
-        if filename is None:
-            raise ValueError(f"Could not find {name} in the pinned revision of {repo}.")
-        source = Path(hf_hub_download(repo_id=repo, revision=revision, filename=filename))
+    source = Path(hf_hub_download(repo_id=entry["repo"], revision=entry["revision"], filename=entry["filename"]))
     if sha256(source) != entry["sha256"]:
         raise ValueError(f"Downloaded file failed SHA-256 verification for {name}.")
     directory.mkdir(parents=True, exist_ok=True)

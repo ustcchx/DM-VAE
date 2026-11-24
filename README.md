@@ -24,13 +24,13 @@ source .venv/bin/activate
 python -m pip install -e ".[hub]"
 ```
 
-Public inference weights are hosted at [Davidwang215/dmvae](https://huggingface.co/Davidwang215/dmvae) (see [Checkpoints](#checkpoints)). The `dmvae.download` commands below fetch the original `.pt` archive instead: request access to `Daxuxu36/DFlow_checkpoint` and `Davidwang215/DFlow` on Hugging Face, then run `hf auth login`. Those checkpoints are automatically downloaded, verified, and saved to `weights/`.
+Weights are public at [Davidwang215/dmvae](https://huggingface.co/Davidwang215/dmvae); no access request or login is needed. The `dmvae.download` commands below fetch them, verify their SHA-256, and save them to `weights/`.
 
 ### Reconstruct an image
 
 ```bash
 python -m dmvae.download f16d32
-python -m dmvae.reconstruct --checkpoint weights/dmvae-f16d32.pt \
+python -m dmvae.reconstruct --checkpoint weights/dmvae-f16d32.safetensors \
   --input assets/astronaut.jpg --output outputs/reconstruction
 ```
 
@@ -45,7 +45,7 @@ Saves the cropped 256 × 256 input (`input.png`), full reconstruction (`high.png
 ```bash
 python -m dmvae.download f16d32 dit-d32-400
 python -m generation.sample \
-  --vae weights/dmvae-f16d32.pt --dit weights/dit-f16d32-400ep.pt \
+  --vae weights/dmvae-f16d32.safetensors --dit weights/dit-f16d32-400ep.safetensors \
   --recipe 400ep-ig-cfg --classes 207 360 --count 2 --output outputs/samples
 ```
 
@@ -81,22 +81,13 @@ All weights are public on Hugging Face: **[Davidwang215/dmvae](https://huggingfa
 | f16d32 · 400 epochs | 32 / 16 | [dmvae-f16d32-50ep](https://huggingface.co/Davidwang215/dmvae/blob/main/vae/dmvae-f16d32-50ep.safetensors) | [lightningdit-f16d32-400ep](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d32-400ep.safetensors) | `dit-d32-400 f16d32` |
 | f16d64 · 400 epochs | 64 / 32 | [dmvae-f16d64-50ep](https://huggingface.co/Davidwang215/dmvae/blob/main/vae/dmvae-f16d64-50ep.safetensors) | [lightningdit-f16d64-400ep](https://huggingface.co/Davidwang215/dmvae/blob/main/lightningdit/lightningdit-f16d64-400ep.safetensors) | `dit-d64-400 f16d64` |
 
-Download the whole repository and sample with its loader (needs `pip install safetensors`):
-
-```bash
-hf download Davidwang215/dmvae --local-dir weights/dmvae
-python weights/dmvae/inference.py --variant d32 --classes 207 --device cuda --precision bf16 --output samples/d32
-```
-
-Use `--variant d64` for f16d64 and `--dit-epochs 64` for the 64-epoch f16d32 generator.
-
-Both f16d32 generators share the same tokenizer. To fetch the original `.pt` archive (gated, see [Quick start](#quick-start)) for all three generators and both tokenizers:
+Both f16d32 generators share the same tokenizer. To download all three generators and both tokenizers:
 
 ```bash
 python -m dmvae.download dit-d32-64 dit-d32-400 dit-d64-400 f16d32 f16d64
 ```
 
-Local filenames, archive revisions, and SHA-256 digests are listed in the [checkpoint catalog](dmvae/weights.json).
+Local filenames, the pinned revision, and SHA-256 digests are listed in the [checkpoint catalog](dmvae/weights.json).
 
 ## Method
 
